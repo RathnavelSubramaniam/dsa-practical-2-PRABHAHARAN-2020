@@ -1,0 +1,36 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: TEST2
+      id: test2
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: TEST2
+        setup-command: ''
+        command: javac factorialRecursion.java && java factorialRecursion
+        input: '5'
+        expected-output: |-
+          PROGRAM TO FIND THE FACTORIAL OF A GIVEN NUMBER USING RECURSION
+          ENTER THE NUMBER TO FIND THE FACTORIAL OF A GIVEN NUMBER USING RECURSION
+          FACTORIAL OF A GIVEN NUMBER IS: 120
+        comparison-method: exact
+        timeout: 10
+        max-score: 10
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TEST2_RESULTS: "${{steps.test2.outputs.result}}"
+      with:
+        runners: test2
